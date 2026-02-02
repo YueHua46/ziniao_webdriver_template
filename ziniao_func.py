@@ -155,17 +155,18 @@ def _delete_all_cache_with_path(path):
 def _open_store(store_info, isWebDriverReadOnlyMode=0, isprivacy=0, isHeadless=0, cookieTypeSave=0, jsInfo=""):
     request_id = str(uuid.uuid4())
     data = {
-        "action": "startBrowser"
-        , "isWaitPluginUpdate": 0
-        , "isHeadless": isHeadless
-        , "requestId": request_id
-        , "isWebDriverReadOnlyMode": isWebDriverReadOnlyMode
-        , "cookieTypeLoad": 0
-        , "cookieTypeSave": cookieTypeSave
-        , "runMode": "1"
-        , "isLoadUserPlugin": False
-        , "pluginIdType": 1
-        , "privacyMode": isprivacy
+        "action": "startBrowser",
+        "isWaitPluginUpdate": 0,
+        "isHeadless": isHeadless,
+        "requestId": request_id,
+        "isWebDriverReadOnlyMode": isWebDriverReadOnlyMode,
+        "cookieTypeLoad": 0,
+        "cookieTypeSave": cookieTypeSave,
+        "runMode": "1",
+        "isLoadUserPlugin": True,  # True: 启动时加载插件，False: 不加载插件
+        "pluginIdType": 1,
+        "privacyMode": isprivacy,
+        "notPromptForDownload": 1,  # 1: 下载文件不弹窗选择保存路径，0: 弹窗
     }
     data.update(user_info)
 
