@@ -26,8 +26,6 @@ from config import ZINIAO_CONFIG
 is_windows = platform.system() == 'Windows'
 is_mac = platform.system() == 'Darwin'
 
-driver_folder_path = ''
-client_path = ''
 if is_windows:
     driver_folder_path = ZINIAO_CONFIG['driver_folder_path']   # 存放chromedriver的文件夹路径，程序自动下载driver文件到该路径下
     client_path = ZINIAO_CONFIG['client_path']  # 紫鸟客户端在本设备的路径
@@ -40,7 +38,7 @@ user_info = ZINIAO_CONFIG['user_info']
 
 def _kill_process(version):
     """
-    终止紫鸟客户端已启动的进程
+    终止紫鸟客户端已启动的进程（若未在运行则静默跳过）
     :param version: 客户端版本
     """
     if version == "v5":
@@ -48,10 +46,21 @@ def _kill_process(version):
     else:
         process_name = 'ziniao.exe'
     if is_windows:
-        os.system('taskkill /f /t /im ' + process_name)
+        ret = subprocess.run(
+            ['taskkill', '/f', '/t', '/im', process_name],
+            capture_output=True,
+            text=True,
+        )
+        if ret.returncode != 0:
+            # 128/1 等表示“没有找到进程”，属于正常情况，不报错
+            logger.info("紫鸟客户端未在运行，跳过终止进程")
+        else:
+            logger.info(f"已终止进程: {process_name}")
     elif is_mac:
-        os.system('killall ziniao')
-        time.sleep(3)
+        ret = subprocess.run(['killall', 'ziniao'], capture_output=True)
+        if ret.returncode == 0:
+            time.sleep(3)
+        # 未运行时 killall 返回非 0，静默跳过
 
 
 def _start_browser():
@@ -430,6 +439,11 @@ def _use_one_browser_run_task(browser, is_headless: bool = False):
     if code != "0":
         logger.error(f"打开店铺失败，statusCode={code}")
         return None
+    # 明显打印维护用信息：调试端口与内核版本
+    logger.info(
+        f"调试端口: {ret_json.get('debuggingPort')}",
+        f"Chromium内核版本: {ret_json.get('coreVersion')}",
+    )
     store_id = ret_json.get("browserOauth")
     if store_id is None:
         store_id = ret_json.get("browserId")

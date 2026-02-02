@@ -9,7 +9,7 @@ if not os.path.exists(log_dir):
 
 # 创建logger
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # 创建按日期轮转的文件处理器
 # when='midnight': 每天午夜创建新的日志文件
