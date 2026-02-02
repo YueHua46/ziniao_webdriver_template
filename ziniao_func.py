@@ -439,10 +439,10 @@ def _use_one_browser_run_task(browser, is_headless: bool = False):
     if code != "0":
         logger.error(f"打开店铺失败，statusCode={code}")
         return None
-    # 明显打印维护用信息：调试端口与内核版本
     logger.info(
-        f"调试端口: {ret_json.get('debuggingPort')}",
-        f"Chromium内核版本: {ret_json.get('coreVersion')}",
+        "调试端口=%s, Chromium内核版本=%s",
+        ret_json.get("debuggingPort"),
+        ret_json.get("coreVersion"),
     )
     store_id = ret_json.get("browserOauth")
     if store_id is None:
